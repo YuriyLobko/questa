@@ -15,4 +15,8 @@ class Question {
         description blank: false
         tags minSize: 1
     }
+
+    static mapping = {
+        description type: 'text'
+    }
 }
