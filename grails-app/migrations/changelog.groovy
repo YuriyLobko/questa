@@ -97,4 +97,6 @@ databaseChangeLog = {
     }
 
     include file: 'create-tag-table.groovy'
+
+	include file: 'create-question-table.groovy'
 }
