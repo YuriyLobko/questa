@@ -9,22 +9,22 @@ class TagTests {
     void testConstraints() {
         def uniqueValidName = 'grails-2.3#legal-characters'
         def illegalName = 'tag*with/illegal CharacterS!@#$%^&*()}{"[}]\';:?<>~'
+        def validTag = new Tag(name: uniqueValidName)
+        def invalidTag = new Tag(name: illegalName)
         def emptyTagNull = new Tag(name: null)
         def emptyTagBlank = new Tag(name: '')
-        def validTag = new Tag(name: uniqueName)
-        def invalidTag = new Tag(name: illegalName)
         mockForConstraintsTests(Tag, [emptyTagBlank, emptyTagNull, validTag, invalidTag])
+
+        def duplicateTag = new Tag(name: uniqueValidName)
+
+        // validation should pass if name is specified and valid
+        assertTrue validTag.validate()
 
         // validation should fail if name is null ot blank
         assertFalse emptyTagNull.validate()
         assertFalse emptyTagBlank.validate()
         assertEquals 'nullable', emptyTagNull.errors['name']
         assertEquals 'blank', emptyTagBlank.errors['name']
-
-        // validation should pass if name is specified and valid
-        assertTrue validTag.validate()
-
-        def duplicateTag = new Tag(name: uniqueValidName)
 
         // validation should fail if tag with specified name already exists
         assertFalse duplicateTag.validate()
