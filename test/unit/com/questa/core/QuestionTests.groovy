@@ -1,8 +1,8 @@
 package com.questa.core
 
-import grails.test.mixin.*
-import org.junit.*
 import com.questa.cred.User
+import grails.test.mixin.Mock
+import grails.test.mixin.TestFor
 
 @TestFor(Question)
 @Mock([User])
@@ -42,7 +42,7 @@ class QuestionTests {
         assertEquals 'Description shouldn\'t be nullable', 'nullable', emptyQuestionNull.errors['description']
         assertEquals 'Author shouldn\'t be nullable', 'nullable', emptyQuestionNull.errors['author']
 
-        assertFalse 'Validation for question with blank title or description should fail',  emptyQuestionBlank.validate()
+        assertFalse 'Validation for question with blank title or description should fail', emptyQuestionBlank.validate()
         assertEquals 'Title shouldn\'t be blank', 'blank', emptyQuestionBlank.errors['title']
         assertEquals 'Description shouldn\'t be nullable', 'blank', emptyQuestionBlank.errors['description']
 
@@ -53,7 +53,7 @@ class QuestionTests {
         assertEquals 'Title should contain 15 characters or more', 'minSize', shortTitleQuestion.errors['title']
 
         assertFalse 'Validation should fail if question is too long', longTitleQuestion.validate()
-        assertEquals 'Title should contain 150 characters or less',  'maxSize', longTitleQuestion.errors['title']
+        assertEquals 'Title should contain 150 characters or less', 'maxSize', longTitleQuestion.errors['title']
 
         assertFalse 'Validation should fail if question doesn\'t have tags', questionWithoutTags.validate()
         assertEquals 'Question should contain at least one tag', 'minSize', questionWithoutTags.errors['tags']

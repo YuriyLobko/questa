@@ -1,7 +1,6 @@
 package com.questa.core
 
-import grails.test.mixin.*
-import org.junit.*
+import grails.test.mixin.TestFor
 
 @TestFor(Tag)
 class TagTests {
@@ -17,29 +16,23 @@ class TagTests {
 
         def duplicateTag = new Tag(name: uniqueValidName)
 
-        // validation should pass if name is specified and valid
-        assertTrue validTag.validate()
+        assertFalse 'Validation should fail if name is null', emptyTagNull.validate()
+        assertEquals 'Tag should contain error if name is null', 'nullable', emptyTagNull.errors['name']
 
-        // validation should fail if name is null ot blank
-        assertFalse emptyTagNull.validate()
-        assertFalse emptyTagBlank.validate()
-        assertEquals 'nullable', emptyTagNull.errors['name']
-        assertEquals 'blank', emptyTagBlank.errors['name']
+        assertFalse 'Validation should fail if name is blank', emptyTagBlank.validate()
+        assertEquals 'Tag should contain error if name is blank', 'blank', emptyTagBlank.errors['name']
 
-        // validation should fail if tag with specified name already exists
-        assertFalse duplicateTag.validate()
-        assertEquals 'unique', duplicateTag.errors['name']
+        assertFalse 'Validation should fail if tag with specified name already exists', duplicateTag.validate()
+        assertEquals 'Tag should contain error if another tag with the same name already exists', 'unique', duplicateTag.errors['name']
 
-        // validation should fail if tag name contains not only [a-z 0-9 # - .] characters
-        assertFalse invalidTag.validate()
-        assertEquals 'matches', invalidTag.errors['name']
+        assertFalse 'Validation should fail if tag name contains not only [a-z 0-9 # - .] characters', invalidTag.validate()
+        assertEquals 'Tag should contain error if tag name contains not only [a-z 0-9 # - .] characters', 'matches', invalidTag.errors['name']
     }
 
     void testNameSetter() {
         def name = 'UpperCaseTag'
         def tag = new Tag(name: name)
 
-        // tag name should transform into lower case
-        assertEquals name.toLowerCase(), tag.name
+        assertEquals 'Tag name should transform into lower case', name.toLowerCase(), tag.name
     }
 }
