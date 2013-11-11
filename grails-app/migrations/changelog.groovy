@@ -95,4 +95,6 @@ databaseChangeLog = {
     changeSet(author: "Admin (generated)", id: "1384083589151-6") {
         addForeignKeyConstraint(baseColumnNames: "user_id", baseTableName: "user_role", baseTableSchemaName: "questa", constraintName: "FK143BF46ABD9BD7F8", deferrable: "false", initiallyDeferred: "false", onDelete: "NO ACTION", onUpdate: "NO ACTION", referencedColumnNames: "id", referencedTableName: "user", referencedTableSchemaName: "questa", referencesUniqueColumn: "false")
     }
+
+    include file: 'create-tag-table.groovy'
 }

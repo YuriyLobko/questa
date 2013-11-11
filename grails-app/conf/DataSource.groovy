@@ -15,7 +15,7 @@ environments {
         dataSource {
             username = "root"
             password = "qwer"
-            dbCreate = "create" // one of 'create', 'create-drop', 'update', 'validate', ''
+            dbCreate = "" // one of 'create', 'create-drop', 'update', 'validate', ''
             url = "jdbc:mysql://localhost/questa?useUnicode=yes&characterEncoding=UTF-8"
         }
     }
