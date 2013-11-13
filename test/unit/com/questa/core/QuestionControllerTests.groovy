@@ -5,6 +5,7 @@ import grails.test.ControllerUnitTestCase
 import grails.test.mixin.Mock
 import javassist.NotFoundException
 import grails.test.mixin.TestFor
+import grails.gorm.PagedResultList
 
 @TestFor(QuestionController)
 @Mock([QuestionService, Question, User])
@@ -67,16 +68,23 @@ class QuestionControllerTests {
 
     void testShow() {
         def dummyQuestion = new Question()
+
         mockDomain(Question)
         def questionMock = mockFor(Question)
         questionMock.demand.static.get(1..1) { Long id ->
             dummyQuestion
         }
+        def questionServiceMock = mockFor(QuestionService)
+        questionServiceMock.demand.getAnswers(1..1) { Question question, Long offset ->
+            null
+        }
+        controller.questionService = questionServiceMock.createMock()
 
         def model = controller.show(1)
 
         assertEquals(dummyQuestion, model.question)
         questionMock.verify()
+        questionServiceMock.verify()
     }
 
     void testEditNotFound() {

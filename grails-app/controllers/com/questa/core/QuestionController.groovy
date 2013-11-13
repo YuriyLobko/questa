@@ -2,8 +2,13 @@ package com.questa.core
 
 import javassist.NotFoundException
 
+import javax.servlet.http.HttpServletResponse
+
 class QuestionController {
     static defaultAction = "list"
+
+    static allowedMethods = [list: 'GET', create: 'GET', show: 'GET', edit: 'GET', answers: 'GET',
+            save: 'POST', answer: 'POST']
 
     def questionService
 
@@ -17,7 +22,7 @@ class QuestionController {
 
     def show(Long id) {
         withQuestion(id) { Question question ->
-            [question: question]
+            [question: question, answers: questionService.getAnswers(question,)]
         }
     }
 
@@ -43,12 +48,37 @@ class QuestionController {
         }
     }
 
+    def answer(Answer answer, Long id) {
+        withQuestion(id) { Question question ->
+            answer.question = question
+            if (answer.save()) {
+                render(template: 'answer', model: [answer: answer])
+            } else {
+                render(status: HttpServletResponse.SC_PRECONDITION_FAILED, model: [answer: answer])
+            }
+        }
+    }
+
+    def answers(Long id, Long offset) {
+        def answers = questionService.getAnswers(id, offset)
+        def displayedAnswersCount = offset + answers.size()
+        if (answers.totalCount > displayedAnswersCount) {
+            response.addIntHeader('more-answers-offset', displayedAnswersCount.toInteger())
+        }
+
+        render(template: 'answers', model: [answers: answers])
+    }
+
     private def withQuestion = { Long id, Closure action ->
         def question = Question.get(id)
         if (question) {
             action.call question
         } else {
-            throw new NotFoundException("Question with id $id has not been found")
+            if (request.getHeader('X-Requested-With') == 'XMLHttpRequest') {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            } else {
+                throw new NotFoundException("Question with id $id has not been found")
+            }
         }
     }
 }
