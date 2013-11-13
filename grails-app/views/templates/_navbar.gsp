@@ -37,7 +37,7 @@
                 <g:message code="nav.ask.button.label"/>
             </g:link>
         </sec:ifLoggedIn>
-        <g:form class="navbar-form navbar-right" role="search" controller="question" action="list" method="get">
+        <g:form class="navbar-form navbar-right" role="search" mapping="main" method="get">
             <div class="form-group">
                 <g:textField name="q" class="form-control" placeholder="${g.message(code: 'nav.search.field.placeholder')}"/>
             </div>
