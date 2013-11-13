@@ -1,10 +1,11 @@
 package com.questa.core
 
+import javassist.NotFoundException
+
 class QuestionController {
     static defaultAction = "list"
 
     def questionService
-    def springSecurityService
 
     def list(Long page) {
         [questions: questionService.getPage(page), total: questionService.count(), page: page ?: 1]
@@ -26,14 +27,28 @@ class QuestionController {
         }
     }
 
-    def save() { }
+    def save(Question question, Long id, Long version) {
+        if (id) {
+            question = withQuestion(id) { Question oldQuestion ->
+                bindData(oldQuestion, question)
+                oldQuestion
+            } as Question
+        }
+
+        question = questionService.save(question, version)
+        if (!question.hasErrors()) {
+            redirect(action: 'show', id: question.id)
+        } else {
+            render(view: 'edit', model: [quesiton: question])
+        }
+    }
 
     private def withQuestion = { Long id, Closure action ->
         def question = Question.get(id)
         if (question) {
             action.call question
         } else {
-            redirect url: '/not-found'
+            throw new NotFoundException("Question with id $id has not been found")
         }
     }
 }

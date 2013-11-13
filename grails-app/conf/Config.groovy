@@ -62,6 +62,8 @@ grails.hibernate.cache.queries = false
 // configure grails root application context
 grails.app.context = '/'
 
+grails.pagination.questionsPerPage = 20
+
 environments {
     development {
         grails.logging.jul.usebridge = true
@@ -71,6 +73,9 @@ environments {
     production {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
+    }
+    test {
+        grails.pagination.questionsPerPage = 5
     }
 }
 

@@ -12,7 +12,16 @@ import com.questa.core.QuestionService
 @TestFor(QuestionService)
 class QuestionServiceTests {
 
-    void testSomething() {
-        fail "Implement me"
+    void testPaginationParameters() {
+        def page = 3
+        def expectedParameters = [
+                offset: grailsApplication.config.grails.pagination.questionsPerPage.toLong() * 2,
+                max: grailsApplication.config.grails.pagination.questionsPerPage.toLong()
+        ]
+
+        def parameters = service.getPaginationParameters(page)
+
+        assertEquals(expectedParameters.offset, parameters.offset)
+        assertEquals(expectedParameters.max, parameters.max)
     }
 }
