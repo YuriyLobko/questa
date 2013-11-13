@@ -62,5 +62,7 @@ grails.project.dependency.resolution = {
         compile ":spring-security-core:2.0-RC2"
 
         compile ':cache:1.1.1'
+
+        compile ":build-test-data:2.0.7"
     }
 }

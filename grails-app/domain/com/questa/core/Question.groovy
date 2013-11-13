@@ -4,11 +4,17 @@ import com.questa.cred.User
 
 class Question {
 
+    transient springSecurityService
+
     String title
     String description
     static belongsTo = [author: User]
 
-    static hasMany = [tags: Tag]
+    static hasMany = [tags: Tag, answers: Answer]
+
+    def beforeInsert() {
+        author = author ?: springSecurityService.currentUser as User
+    }
 
     static constraints = {
         title blank: false, unique: true, minSize: 15, maxSize: 150
@@ -18,5 +24,7 @@ class Question {
 
     static mapping = {
         description type: 'text'
+        answers cascade: 'delete'
+        sort id: 'desc'
     }
 }

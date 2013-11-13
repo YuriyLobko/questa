@@ -1,5 +1,8 @@
 package com.questa.cred
 
+import com.questa.core.Question
+import com.questa.core.Answer
+
 class User {
 
     transient springSecurityService
@@ -19,6 +22,8 @@ class User {
 
     static transients = ['springSecurityService', 'fullName']
 
+    static hasMany = [questions: Question, answers: Answer]
+
     static constraints = {
         firstName blank: false
         lastName blank: false
@@ -28,6 +33,8 @@ class User {
 
     static mapping = {
         password column: '`password`'
+        answers cascade: 'delete-orphan'
+        questions cascade: 'delete-orphan'
     }
 
     Set<Role> getAuthorities() {
