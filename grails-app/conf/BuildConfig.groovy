@@ -64,5 +64,9 @@ grails.project.dependency.resolution = {
         compile ':cache:1.1.1'
 
         compile ":build-test-data:2.0.7"
+
+        compile ":twitter-bootstrap:3.0.2"
+
+        compile ":fields:1.3"
     }
 }
