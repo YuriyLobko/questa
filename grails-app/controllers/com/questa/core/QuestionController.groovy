@@ -44,7 +44,7 @@ class QuestionController {
         if (!question.hasErrors()) {
             redirect(action: 'show', id: question.id)
         } else {
-            render(view: 'edit', model: [quesiton: question])
+            render(view: 'edit', model: [question: question])
         }
     }
 

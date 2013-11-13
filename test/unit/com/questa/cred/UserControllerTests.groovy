@@ -26,6 +26,7 @@ class UserControllerTests {
         assertNull model.user.email
         assertNull model.user.firstName
         assertNull model.user.lastName
+        assertFalse model.user.hasErrors()
     }
 
     void testRegisterUserExists() {

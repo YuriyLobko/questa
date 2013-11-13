@@ -14,6 +14,8 @@ class UserController {
                     return
                 }
             }
+        } else {
+            user.clearErrors()
         }
 
         [user: user]

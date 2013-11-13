@@ -106,18 +106,11 @@ grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.questa.cred.U
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.questa.cred.UserRole'
 grails.plugin.springsecurity.userLookup.usernamePropertyName = 'email'
 grails.plugin.springsecurity.authority.className = 'com.questa.cred.Role'
+grails.plugin.springsecurity.interceptUrlMap = [
+        '/**':  ["permitAll"],
+]
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-	'/':                              ['permitAll'],
-	'/index':                         ['permitAll'],
-	'/index.gsp':                     ['permitAll'],
-	'/**/js/**':                      ['permitAll'],
-	'/**/css/**':                     ['permitAll'],
-	'/**/images/**':                  ['permitAll'],
-	'/**/favicon.ico':                ['permitAll']
+        '/**':  ['permitAll'],
 ]
 
-grails.plugin.springsecurity.secureChannel.definition = [
-        '/login/**':        'REQUIRES_SECURE_CHANNEL',
-        '/register/**':     'REQUIRES_SECURE_CHANNEL',
-]
-
+grails.plugin.springsecurity.auth.loginFormUrl = '/auth/login'

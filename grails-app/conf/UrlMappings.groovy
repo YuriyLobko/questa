@@ -25,6 +25,8 @@ class UrlMappings {
             }
         }
 
+        name main: '/'(controller: 'question')
+
         '/not-found'(view: 'notFound')
     }
 }

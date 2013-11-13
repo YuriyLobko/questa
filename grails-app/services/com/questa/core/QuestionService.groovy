@@ -7,12 +7,8 @@ import grails.gorm.PagedResultList
 class QuestionService {
     def grailsApplication
 
-    def getPage(Long page = 1, List<String> tagList = null) {
-        Question.createCriteria().list(getPaginationParameters(page)) {
-            tags {
-                'in'('name', tagList)
-            }
-        }
+    def getPage(Long page) {
+        Question.list(getPaginationParameters(page))
     }
 
     @Cacheable('questionCount')
@@ -22,7 +18,6 @@ class QuestionService {
 
     @CacheEvict(value='questionCount')
     Question save(Question question, Long version) {
-        println('own service method')
         if (question.version > version) {
             question.errors.rejectValue("version", "default.optimistic.locking.failure")
         }
@@ -43,6 +38,7 @@ class QuestionService {
     }
 
     protected Map getPaginationParameters(Long page) {
+        page = page ?: 1
         [
                 offset: grailsApplication.config.grails.pagination.questionsPerPage.toLong() * (page - 1),
                 max: grailsApplication.config.grails.pagination.questionsPerPage.toLong()

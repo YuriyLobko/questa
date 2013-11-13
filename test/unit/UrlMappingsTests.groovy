@@ -1,11 +1,10 @@
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
 import com.questa.core.QuestionController
-import com.questa.core.AnswerController
 import grails.test.mixin.web.UrlMappingsUnitTestMixin
 
 @TestFor(UrlMappings)
-@Mock([QuestionController, AnswerController])
+@Mock([QuestionController])
 class UrlMappingsTests extends UrlMappingsUnitTestMixin {
     void testQuestionMappings() {
         assertForwardUrlMapping('/2', controller: 'question', action: 'list') {
