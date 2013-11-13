@@ -116,3 +116,8 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/**/favicon.ico':                ['permitAll']
 ]
 
+grails.plugin.springsecurity.secureChannel.definition = [
+        '/login/**':        'REQUIRES_SECURE_CHANNEL',
+        '/register/**':     'REQUIRES_SECURE_CHANNEL',
+]
+
