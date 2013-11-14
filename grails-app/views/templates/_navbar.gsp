@@ -15,6 +15,13 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
+            <sec:ifAnyGranted roles="ROLE_ADMIN">
+                <li class="${params.controller == 'user' && (params.action in ['list', 'edit', 'save'] || !params.action) ? 'active' : ''}">
+                    <g:link controller="user" action="list">
+                        <g:message code="nav.user.list.link.label"/>
+                    </g:link>
+                </li>
+            </sec:ifAnyGranted>
             <li class="${params.controller == 'question' && (params.action in ['list', 'show', 'create', 'edit', 'save'] || !params.action) ? 'active' : ''}">
                 <g:link mapping="main" class="visible-lg">
                     <g:message code="nav.question.list.link.label"/>
@@ -67,7 +74,7 @@
             <div class="form-group">
                 <g:textField name="tag" class="form-control" placeholder="${g.message(code: 'nav.search.tag.placeholder')}"
                              rel='typeahead' data-key="name" data-name="tags" data-remote='/typeahead/tag/%QUERY'
-                             autocomplete="off"/>
+                             value="${params.tag ?: ''}" autocomplete="off"/>
             </div>
             <div class="form-group">
                 <g:textField name="q" class="form-control" placeholder="${g.message(code: 'nav.search.field.placeholder')}"/>

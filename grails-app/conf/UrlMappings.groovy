@@ -1,3 +1,5 @@
+import javassist.NotFoundException
+
 class UrlMappings {
 
     static mappings = {
@@ -31,6 +33,8 @@ class UrlMappings {
 
         name main: '/'(controller: 'question')
 
-        '/not-found'(view: 'notFound')
+        "404"(view: '404')
+        "500"(view: '404', exception: NotFoundException)
+        "500"(view: '500')
     }
 }

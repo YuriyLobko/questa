@@ -22,9 +22,4 @@ class UrlMappingsTests extends UrlMappingsUnitTestMixin {
         }
         assertForwardUrlMapping('/save/question', controller: 'question', action: 'save')
     }
-
-    void testSystemMappings() {
-        // not found url
-        assertForwardUrlMapping('/not-found', view: 'notFound')
-    }
 }

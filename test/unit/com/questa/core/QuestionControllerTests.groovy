@@ -1,50 +1,45 @@
 package com.questa.core
 
 import com.questa.cred.User
-import grails.test.ControllerUnitTestCase
+
 import grails.test.mixin.Mock
-import javassist.NotFoundException
+
 import grails.test.mixin.TestFor
-import grails.gorm.PagedResultList
-import javax.servlet.http.HttpServlet
+
 import javax.servlet.http.HttpServletResponse
 
 @TestFor(QuestionController)
 @Mock([QuestionService, Question, User])
 class QuestionControllerTests {
     void setUp() {
-        def accessServiceMock = mockFor(UserAccessService, true)
+        def accessServiceMock = mockFor(UserService, true)
         accessServiceMock.demand.hasAccessToQuestion(0..1) { Question q, String action -> true}
-        controller.userAccessService = accessServiceMock.createMock()
+        controller.userService = accessServiceMock.createMock()
     }
 
     void testListFirstPage() {
         def questionService = mockFor(QuestionService)
-        def mockQuestionList = (0..20).collect { mockFor(Question) }
-        def mockTotalCount = 234
-        questionService.demand.getPage { Long page, String tag, String term -> mockQuestionList}
-        questionService.demand.count {-> mockTotalCount }
+        def mockQuestionList = [list: (0..20).collect { mockFor(Question) }, total: 234]
+        questionService.demand.getPage { Integer page, String tag, String term -> mockQuestionList}
         controller.questionService = questionService.createMock()
 
         def model = controller.list(null, null, null)
 
-        assertEquals(model.questions, mockQuestionList)
-        assert model.total == mockTotalCount
+        assertEquals(model.questions, mockQuestionList.list)
+        assert model.total == mockQuestionList.total
         assert model.page == 1
     }
 
     void testList() {
         def questionService = mockFor(QuestionService)
-        def mockQuestionList = (0..20).collect { mockFor(Question) }
-        def mockTotalCount = 234
-        questionService.demand.getPage { Long page, String tag, String term -> mockQuestionList}
-        questionService.demand.count {-> mockTotalCount }
+        def mockQuestionList = [list: (0..20).collect { mockFor(Question) }, total: 234]
+        questionService.demand.getPage { Integer page, String tag, String term -> mockQuestionList}
         controller.questionService = questionService.createMock()
 
         def model = controller.list(3, null, null)
 
-        assertEquals(model.questions, mockQuestionList)
-        assert model.total == mockTotalCount
+        assertEquals(model.questions, mockQuestionList.list)
+        assert model.total == mockQuestionList.total
         assert model.page == 3
 
     }

@@ -1,27 +1,26 @@
 package com.questa.core
 
+import com.questa.PaginationUtil
 import com.questa.cred.User
-import grails.plugin.cache.CacheEvict
-import grails.plugin.cache.Cacheable
 
 class QuestionService {
     def grailsApplication
     def springSecurityService
 
-    def getPage(Long page, String searchTag, String query) {
-        def questions = Question.createCriteria().list(getPaginationParameters(page)) {
-            if (query) {
-                ilike('title', "%$query%")
-                ilike('description', "%$query%")
-            }
-            if (searchTag) {
-                'tags' {
-                    ilike('name', searchTag)
+    def getPage(Integer page, String searchTag, String query) {
+        PaginationUtil.create(grailsApplication.config.grails.pagination.questionsPerPage.toInteger()) { Map params ->
+            Question.createCriteria().list(params) {
+                if (query) {
+                    ilike('title', "%$query%")
+                    ilike('description', "%$query%")
+                }
+                if (searchTag) {
+                    'tags' {
+                        ilike('name', searchTag)
+                    }
                 }
             }
-        }
-
-        [list: questions, total: (long)Math.ceil((double)questions.totalCount/grailsApplication.config.grails.pagination.questionsPerPage.toLong())]
+        }.getPage(page)
     }
 
     Question save(Question question, Long version, String tags) {
@@ -68,13 +67,5 @@ class QuestionService {
         }
 
         [list: answers.toList(), total: answers.totalCount]
-    }
-
-    protected Map getPaginationParameters(Long page) {
-        page = page ?: 1
-        [
-                offset: grailsApplication.config.grails.pagination.questionsPerPage.toLong() * (page - 1),
-                max: grailsApplication.config.grails.pagination.questionsPerPage.toLong()
-        ]
     }
 }

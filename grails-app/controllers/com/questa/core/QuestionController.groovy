@@ -2,8 +2,6 @@ package com.questa.core
 
 import javax.servlet.http.HttpServletResponse
 import grails.plugin.springsecurity.annotation.Secured
-import javax.naming.ldap.PagedResultsControl
-import grails.gorm.PagedResultList
 
 class QuestionController {
     static defaultAction = "list"
@@ -12,9 +10,9 @@ class QuestionController {
             save: 'POST', answer: 'POST']
 
     def questionService
-    def userAccessService
+    def userService
 
-    def list(Long page, String q, String tag) {
+    def list(Integer page, String q, String tag) {
         def questions = questionService.getPage(page, tag, q)
         [questions: questions.list, total: questions.total, page: page ?: 1]
     }
@@ -84,7 +82,7 @@ class QuestionController {
     private def withQuestion = { Long id, Closure action ->
         def question = Question.get(id)
         if (question) {
-            if (userAccessService.hasAccessToQuestion(question, params.action)) {
+            if (userService.hasAccessToQuestion(question, params.action)) {
                 action.call question
             } else {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)

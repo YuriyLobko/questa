@@ -8,9 +8,10 @@ class UserController {
 
     static allowedMethods = [register: ['GET', 'POST'], edit: 'GET', save: 'POST', changePassword: ['GET', 'POST']]
 
-    def userAccessService
+    def userService
     def springSecurityService
 
+    @Secured('isAnonymous()')
     def register(User user) {
         if (request.method == 'POST') {
             if (params.password2 != user.password) {
@@ -74,10 +75,25 @@ class UserController {
         redirect(action: 'edit', id: command.id)
     }
 
+    @Secured('ROLE_ADMIN')
+    def list(Integer page, String q) {
+        def users = userService.getPage(page, q, params.sort, params.order)
+        [users: users.list, total: users.total, page: users.page]
+    }
+
+    @Secured('ROLE_ADMIN')
+    def delete(Long id) {
+        withUser(id) { User user ->
+            user.delete()
+            flash.success = (flash.remove('success') ?: []) << 'user.delete.success.message'
+            redirect(action: 'list')
+        }
+    }
+
     private def withUser = { Long id, Closure action ->
         def user = User.get(id)
         if (user) {
-            if (userAccessService.hasAccessToUser(user, params.action)) {
+            if (userService.hasAccessToUser(user, params.action)) {
                 action.call user
             } else {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
