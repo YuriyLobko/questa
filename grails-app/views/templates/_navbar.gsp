@@ -39,6 +39,11 @@
         </sec:ifLoggedIn>
         <g:form class="navbar-form navbar-right" role="search" mapping="main" method="get">
             <div class="form-group">
+                <g:textField name="tag" class="form-control" placeholder="${g.message(code: 'nav.search.tag.placeholder')}"
+                             rel='typeahead' data-key="name" data-name="tags" data-remote='/typeahead/tag/%QUERY'
+                             autocomplete="off"/>
+            </div>
+            <div class="form-group">
                 <g:textField name="q" class="form-control" placeholder="${g.message(code: 'nav.search.field.placeholder')}"/>
             </div>
             <button type="submit" class="btn btn-default">${g.message(code: 'nav.search.button.label')}</button>

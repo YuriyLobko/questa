@@ -1,8 +1,9 @@
 package com.questa.core
 
-import javassist.NotFoundException
-
 import javax.servlet.http.HttpServletResponse
+import grails.plugin.springsecurity.annotation.Secured
+import javax.naming.ldap.PagedResultsControl
+import grails.gorm.PagedResultList
 
 class QuestionController {
     static defaultAction = "list"
@@ -11,27 +12,36 @@ class QuestionController {
             save: 'POST', answer: 'POST']
 
     def questionService
+    def userAccessService
 
-    def list(Long page) {
-        [questions: questionService.getPage(page), total: questionService.count(), page: page ?: 1]
+    def list(Long page, String q, String tag) {
+        [questions: questionService.getPage(page, tag, q), total: questionService.count(), page: page ?: 1]
     }
 
+    @Secured('isFullyAuthenticated()')
     def create() {
         [question: Question.newInstance(params)]
     }
 
     def show(Long id) {
         withQuestion(id) { Question question ->
-            [question: question, answers: questionService.getAnswers(question,)]
+            def answers = questionService.getAnswers(question)
+            def displayedAnswersCount = answers.list?.size()
+            if (answers.total > displayedAnswersCount) {
+                response.addHeader('more-answers-offset', displayedAnswersCount.toString())
+            }
+            [question: question, answers: answers.list]
         }
     }
 
+    @Secured('isFullyAuthenticated()')
     def edit(Long id) {
         withQuestion(id) { Question question ->
             [question: question]
         }
     }
 
+    @Secured('isFullyAuthenticated()')
     def save(Question question, Long id, Long version) {
         if (id) {
             question = withQuestion(id) { Question oldQuestion ->
@@ -40,7 +50,7 @@ class QuestionController {
             } as Question
         }
 
-        question = questionService.save(question, version)
+        question = questionService.save(question, version, params.tagNames)
         if (!question.hasErrors()) {
             redirect(action: 'show', id: question.id)
         } else {
@@ -48,37 +58,38 @@ class QuestionController {
         }
     }
 
+    @Secured('isFullyAuthenticated()')
     def answer(Answer answer, Long id) {
         withQuestion(id) { Question question ->
-            answer.question = question
-            if (answer.save()) {
-                render(template: 'answer', model: [answer: answer])
+            answer = questionService.addAnswer(question, answer)
+            if (!answer.hasErrors()) {
+                render(template: 'answer/item', model: [answer: answer])
             } else {
-                render(status: HttpServletResponse.SC_PRECONDITION_FAILED, model: [answer: answer])
+                render(template: 'answer/errors', model: [answer: answer], status: HttpServletResponse.SC_PRECONDITION_FAILED)
             }
         }
     }
 
     def answers(Long id, Long offset) {
         def answers = questionService.getAnswers(id, offset)
-        def displayedAnswersCount = offset + answers.size()
-        if (answers.totalCount > displayedAnswersCount) {
-            response.addIntHeader('more-answers-offset', displayedAnswersCount.toInteger())
+        def displayedAnswersCount = offset + answers.list.size()
+        if (answers.total > displayedAnswersCount) {
+            response.addHeader('more-answers-offset', displayedAnswersCount.toString())
         }
 
-        render(template: 'answers', model: [answers: answers])
+        render(template: 'answer/list', model: [answers: answers.list])
     }
 
     private def withQuestion = { Long id, Closure action ->
         def question = Question.get(id)
         if (question) {
-            action.call question
-        } else {
-            if (request.getHeader('X-Requested-With') == 'XMLHttpRequest') {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            if (userAccessService.hasAccessToQuestion(question, params.action)) {
+                action.call question
             } else {
-                throw new NotFoundException("Question with id $id has not been found")
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
             }
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
         }
     }
 }

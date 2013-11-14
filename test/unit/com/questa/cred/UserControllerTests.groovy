@@ -30,7 +30,7 @@ class UserControllerTests {
     }
 
     void testRegisterUserExists() {
-        User.metaClass.encodePassword = { -> println('test') }
+        User.metaClass.encodePassword = { -> }
 
         def user = new User(email: 'existing.email@mail.com', firstName: 'John', lastName: 'Doe', password: 'pass').save(validate: false)
         params.password2 = 'one'

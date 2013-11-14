@@ -6,19 +6,27 @@ import grails.test.mixin.Mock
 import javassist.NotFoundException
 import grails.test.mixin.TestFor
 import grails.gorm.PagedResultList
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletResponse
 
 @TestFor(QuestionController)
 @Mock([QuestionService, Question, User])
 class QuestionControllerTests {
+    void setUp() {
+        def accessServiceMock = mockFor(UserAccessService, true)
+        accessServiceMock.demand.hasAccessToQuestion(0..1) { Question q, String action -> true}
+        controller.userAccessService = accessServiceMock.createMock()
+    }
+
     void testListFirstPage() {
         def questionService = mockFor(QuestionService)
         def mockQuestionList = (0..20).collect { mockFor(Question) }
         def mockTotalCount = 234
-        questionService.demand.getPage { Long page -> mockQuestionList}
+        questionService.demand.getPage { Long page, String tag, String term -> mockQuestionList}
         questionService.demand.count {-> mockTotalCount }
         controller.questionService = questionService.createMock()
 
-        def model = controller.list(null)
+        def model = controller.list(null, null, null)
 
         assertEquals(model.questions, mockQuestionList)
         assert model.total == mockTotalCount
@@ -29,11 +37,11 @@ class QuestionControllerTests {
         def questionService = mockFor(QuestionService)
         def mockQuestionList = (0..20).collect { mockFor(Question) }
         def mockTotalCount = 234
-        questionService.demand.getPage { Long page -> mockQuestionList}
+        questionService.demand.getPage { Long page, String tag, String term -> mockQuestionList}
         questionService.demand.count {-> mockTotalCount }
         controller.questionService = questionService.createMock()
 
-        def model = controller.list(3)
+        def model = controller.list(3, null, null)
 
         assertEquals(model.questions, mockQuestionList)
         assert model.total == mockTotalCount
@@ -74,9 +82,9 @@ class QuestionControllerTests {
         questionMock.demand.static.get(1..1) { Long id ->
             dummyQuestion
         }
-        def questionServiceMock = mockFor(QuestionService)
-        questionServiceMock.demand.getAnswers(1..1) { Question question, Long offset ->
-            null
+        def questionServiceMock = mockFor(QuestionService, true)
+        questionServiceMock.demand.getAnswers(0..1) { Question question ->
+            [list: [], total: 0]
         }
         controller.questionService = questionServiceMock.createMock()
 
@@ -94,9 +102,9 @@ class QuestionControllerTests {
             null
         }
 
-        shouldFail(NotFoundException) {
-            controller.edit(2)
-        }
+        controller.edit(2)
+
+        assertEquals HttpServletResponse.SC_NOT_FOUND, response.status
         questionMock.verify()
     }
 
@@ -107,9 +115,9 @@ class QuestionControllerTests {
             null
         }
 
-        shouldFail(NotFoundException) {
-            controller.show(2)
-        }
+        controller.show(2)
+
+        assertEquals HttpServletResponse.SC_NOT_FOUND, response.status
         questionMock.verify()
     }
 
@@ -122,7 +130,7 @@ class QuestionControllerTests {
             1
         }
         def questionServiceMock = mockFor(QuestionService)
-        questionServiceMock.demand.save(1..1) { Question q, Long version ->
+        questionServiceMock.demand.save(1..1) { Question q, Long version, String tags ->
             new Question()
         }
 

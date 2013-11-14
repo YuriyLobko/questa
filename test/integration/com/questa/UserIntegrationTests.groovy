@@ -17,8 +17,7 @@ class UserIntegrationTests extends GroovyTestCase {
         authorAnswer = User.build(email: 'email1')
         authorQuestion = User.build(email: 'email2')
         tag = Tag.build()
-        question = Question.build(author: authorQuestion)
-        question.addToTags(tag)
+        question = Question.build(author: authorQuestion, tags: [tag])
         answer = Answer.build(question: question, author: authorAnswer)
 
         assertEquals "Should be created 2 users", 2, User.count

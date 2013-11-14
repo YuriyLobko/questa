@@ -63,6 +63,8 @@ grails.hibernate.cache.queries = false
 grails.app.context = '/'
 
 grails.pagination.questionsPerPage = 20
+grails.pagination.answersPerPage = 5
+grails.typeahead.max = 10
 
 environments {
     development {

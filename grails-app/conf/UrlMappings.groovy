@@ -14,12 +14,16 @@ class UrlMappings {
         }
 
         "/$action/$controller/$id?" {
-            constraints {
-                id matches: /\d*/
-            }
+
         }
 
         "/$page?"(controller: 'question') {
+            constraints {
+                page matches: /\d*/
+            }
+        }
+
+        "/tag/$tag/$page?"(controller: 'question') {
             constraints {
                 page matches: /\d*/
             }

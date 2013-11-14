@@ -19,7 +19,9 @@ class Question {
     static constraints = {
         title blank: false, unique: true, minSize: 15, maxSize: 150
         description blank: false
-        tags minSize: 1
+        tags validator: { val, obj ->
+            if (obj.tags?.size() < 1) return ['minSize', 'question.tags.minSize.error']
+        }
     }
 
     static mapping = {
