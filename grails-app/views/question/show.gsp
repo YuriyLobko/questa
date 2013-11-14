@@ -6,6 +6,11 @@
 </head>
 <body>
 <div class="row">
+    <g:if test="${sec.loggedInUserInfo(field: 'id') == question.authorId.toString() || sec.ifAnyGranted(roles: 'ROLE_ADMIN')}">
+        <g:link action="edit" id="${question.id}" class="pull-right btn btn-info">
+            <span class="glyphicon glyphicon-pencil"></span> <g:message code="default.button.edit.label"/>
+        </g:link>
+    </g:if>
     <h1 class="media-heading">${question.title}</h1>
     <div class="media">
         <a class="pull-left" href="#">

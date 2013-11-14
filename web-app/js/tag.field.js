@@ -8,7 +8,7 @@
             if(field.attr('data-tag-limit')) tagManagerOptions.limit = field.attr('data-tag-limit');
             if(field.attr('data-hidden-tag-list-name')) tagManagerOptions.hiddenTagListName = field.attr('data-hidden-tag-list-name');
             if(field.attr('data-prefilled')) tagManagerOptions.prefilled = field.attr('data-prefilled');
-            tagManagerOptions.delimiters = [9,13,32,44];
+            tagManagerOptions.delimiters = [44,9,13,32];
 
             if(field.attr('data-remote')) typeaheadOptions.remote = field.attr('data-remote');
             if(field.attr('data-name')) typeaheadOptions.name = field.attr('data-name');

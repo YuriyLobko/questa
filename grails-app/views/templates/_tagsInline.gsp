@@ -1,3 +1,3 @@
 <g:each in="${tags.sort {a, b -> a.name <=> b.name}}" var="tag">
-    <span class="label label-primary">${tag.name}</span>&nbsp;
+    &nbsp;<g:link controller="question" action="list" params="[tag: tag.name]" class="label label-primary">${tag.name}</g:link>
 </g:each>

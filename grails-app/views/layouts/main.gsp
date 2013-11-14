@@ -11,6 +11,7 @@
 <tmpl:/templates/navbar/>
 <div id="wrap">
     <div class="container">
+        <tmpl:/templates/messages/>
         <g:layoutBody/>
     </div>
 </div>

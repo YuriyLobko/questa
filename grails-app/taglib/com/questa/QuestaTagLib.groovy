@@ -32,4 +32,19 @@ class QuestaTagLib {
 
         out << render(template: '/taglib/tagField', model: [attrs: attributes])
     }
+
+    /**
+     * @attr total REQUIRED
+     * @attr current REQUIRED
+     * @attr controller REQUIRED
+     * @attr action REQUIRED
+     */
+    def pagination = {attrs ->
+        Long current = attrs.remove('current')
+        Long total = attrs.remove('total')
+        def pageItems = ((current-5..current+5).toList() << (long)1 << total).findAll { it > 0 && it <= total}.toSet().sort()
+
+        out << render(template: '/taglib/pagination', model: [items: pageItems, current: current, total: total,
+                action: attrs.action, controller: attrs.controller])
+    }
 }

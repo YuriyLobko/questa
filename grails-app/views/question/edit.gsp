@@ -2,14 +2,14 @@
 <html>
 <head>
     <meta name="layout" content="main" />
-    <title><g:message code="question.create.title"/></title>
+    <title><g:message code="question.edit.title"/></title>
 </head>
 <body>
-<h3><g:message code="question.create.header"/></h3>
+<h3><g:message code="question.edit.header"/></h3>
 <g:form action="save" id="${question?.id}">
     <g:hiddenField name="version" value="${question?.version}"/>
     <tmpl:form question="${question}"/>
-    <g:submitButton name="create" value="${g.message(code: 'question.create.button.label')}" class="btn btn-success"/>
+    <g:submitButton name="update" value="${g.message(code: 'question.create.button.label')}" class="btn btn-success"/>
 </g:form>
 </body>
 </html>

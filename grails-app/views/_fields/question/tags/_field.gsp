@@ -5,5 +5,5 @@
     </g:hasErrors>
     <div id="tagContainer"></div>
     <qa:tagField name="tagNames" remote="/typeahead/tag/%QUERY" container="tagContainer" typeaheadKey="name" class="form-control"
-                 autocomplete="off" values="${value*.name}"/>
+                 autocomplete="off" values="${value ? value*.name.sort() : []}"/>
 </div>

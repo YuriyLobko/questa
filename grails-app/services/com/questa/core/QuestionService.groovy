@@ -9,7 +9,7 @@ class QuestionService {
     def springSecurityService
 
     def getPage(Long page, String searchTag, String query) {
-        Question.createCriteria().list(getPaginationParameters(page)) {
+        def questions = Question.createCriteria().list(getPaginationParameters(page)) {
             if (query) {
                 ilike('title', "%$query%")
                 ilike('description', "%$query%")
@@ -20,14 +20,10 @@ class QuestionService {
                 }
             }
         }
+
+        [list: questions, total: (long)Math.ceil((double)questions.totalCount/grailsApplication.config.grails.pagination.questionsPerPage.toLong())]
     }
 
-    @Cacheable('questionCount')
-    def count() {
-        Question.count
-    }
-
-    @CacheEvict(value = 'questionCount')
     Question save(Question question, Long version, String tags) {
         if (question.version > version) {
             question.errors.rejectValue("version", "default.optimistic.locking.failure")
@@ -35,13 +31,15 @@ class QuestionService {
 
         question.author = question.author ?: springSecurityService.currentUser as User
         question = bindTags(question, tags)
-        question.save()
+        question.save(flush: true)
 
         question
     }
 
     Question bindTags(Question question, String tagList) {
-        question.tags?.clear()
+        question.tags?.collect()?.each {
+            question.removeFromTags(it)
+        }
         tagList?.split(',')?.each {
             if (it) {
                 question.addToTags(Tag.findByName(it.toLowerCase()) ?: new Tag(name: it))

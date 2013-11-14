@@ -8,5 +8,10 @@
     <g:each in="${questions}" var="question">
         <tmpl:/templates/questionItem question="${question}"/>
     </g:each>
+    <div class="row">
+        <div class="well well-sm text-center">
+            <qa:pagination total="${total}" action="list" current="${page}" controller="question"/>
+        </div>
+    </div>
 </body>
 </html>

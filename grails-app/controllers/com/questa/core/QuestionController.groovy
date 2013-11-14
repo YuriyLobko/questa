@@ -15,10 +15,11 @@ class QuestionController {
     def userAccessService
 
     def list(Long page, String q, String tag) {
-        [questions: questionService.getPage(page, tag, q), total: questionService.count(), page: page ?: 1]
+        def questions = questionService.getPage(page, tag, q)
+        [questions: questions.list, total: questions.total, page: page ?: 1]
     }
 
-    @Secured('isFullyAuthenticated()')
+    @Secured('isAuthenticated()')
     def create() {
         [question: Question.newInstance(params)]
     }
@@ -34,14 +35,14 @@ class QuestionController {
         }
     }
 
-    @Secured('isFullyAuthenticated()')
+    @Secured('isAuthenticated()')
     def edit(Long id) {
         withQuestion(id) { Question question ->
             [question: question]
         }
     }
 
-    @Secured('isFullyAuthenticated()')
+    @Secured('isAuthenticated()')
     def save(Question question, Long id, Long version) {
         if (id) {
             question = withQuestion(id) { Question oldQuestion ->
@@ -58,7 +59,7 @@ class QuestionController {
         }
     }
 
-    @Secured('isFullyAuthenticated()')
+    @Secured('isAuthenticated()')
     def answer(Answer answer, Long id) {
         withQuestion(id) { Question question ->
             answer = questionService.addAnswer(question, answer)

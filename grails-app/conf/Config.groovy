@@ -116,3 +116,8 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 ]
 
 grails.plugin.springsecurity.auth.loginFormUrl = '/auth/login'
+grails.plugin.springsecurity.adh.errorPage = '/denied/login'
+grails.plugin.springsecurity.adh.ajaxErrorPage = '/ajaxDenied/login'
+grails.plugin.springsecurity.failureHandler.defaultFailureUrl = '/authfail/login?login_error=1'
+grails.plugin.springsecurity.failureHandler.ajaxAuthFailUrl = '/authfail/login?ajax=true'
+grails.plugin.springsecurity.logout.postOnly = false
