@@ -8,9 +8,9 @@ Configure ./grails-app/conf/DataSource.groovy before using
 Generated Users
 ---------------
 
-email: admin@questa.com
-pass: admin
+|email: admin@questa.com
+|pass: admin
 
-email: user@questa.com
-pass: user
+|email: user@questa.com
+|pass: user
 
